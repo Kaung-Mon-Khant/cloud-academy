@@ -36,10 +36,10 @@ resource "aws_internet_gateway" "main" {
 }
 
 resource "aws_subnet" "public" {
+  # map_public_ip_on_launch: first-boot apt/git need internet before the Elastic IP is attached.
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.20.1.0/24"
   availability_zone       = data.aws_availability_zones.available.names[0]
-  # Needed so first-boot apt/git work before the Elastic IP is attached (the EIP then replaces it).
   map_public_ip_on_launch = true
   tags                    = { Name = "${local.name}-public" }
 }
