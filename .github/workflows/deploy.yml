@@ -1,0 +1,92 @@
+name: Deploy to EC2
+
+# Runs after CI passes on main (or manually from the Actions tab).
+# No SSH and no AWS keys: GitHub's OIDC token is exchanged for a short-lived IAM role,
+# and AWS Systems Manager (SSM) runs the update script on the instance.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write # OIDC → AWS
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false # never interrupt a half-finished deploy
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'ap-northeast-1' }}
+      INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - name: Check configuration
+        run: |
+          if [ -z "${{ vars.AWS_ROLE_ARN }}" ] || [ -z "$INSTANCE_ID" ]; then
+            echo "::error::Set repository variables AWS_ROLE_ARN and EC2_INSTANCE_ID (Settings → Secrets and variables → Actions → Variables)."
+            exit 1
+          fi
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Run update on the instance via SSM
+        id: send
+        run: |
+          # The script SSM runs as root on the instance (written to a file, then JSON-encoded with jq).
+          cat > deploy.sh <<'SCRIPT'
+          set -euo pipefail
+          cd /opt/cloud-academy
+          git fetch --depth 1 origin "$SHA"
+          git reset --hard FETCH_HEAD
+          docker compose up -d --build --remove-orphans
+          docker image prune -f
+          for i in $(seq 1 30); do
+            if docker compose exec -T api wget -qO- http://127.0.0.1:4000/health; then
+              echo; echo "Deployed $(git rev-parse --short HEAD)"; docker compose ps; exit 0
+            fi
+            sleep 5
+          done
+          echo "API did not become healthy"; docker compose ps; docker compose logs --tail 50 api; exit 1
+          SCRIPT
+          jq -n --arg sha "$SHA" --rawfile body deploy.sh '{commands: ["SHA=\($sha)\n" + $body]}' > params.json
+
+          COMMAND_ID=$(aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name AWS-RunShellScript \
+            --comment "deploy ${SHA:0:7}" \
+            --timeout-seconds 1800 \
+            --parameters file://params.json \
+            --query Command.CommandId --output text)
+          echo "command_id=$COMMAND_ID" >> "$GITHUB_OUTPUT"
+          echo "SSM command: $COMMAND_ID"
+
+      - name: Wait for result
+        run: |
+          ID=${{ steps.send.outputs.command_id }}
+          for i in $(seq 1 180); do   # up to 30 min (builds on t3.micro are slow)
+            STATUS=$(aws ssm get-command-invocation --command-id "$ID" --instance-id "$INSTANCE_ID" \
+                       --query Status --output text 2>/dev/null || echo Pending)
+            echo "[$i] $STATUS"
+            case "$STATUS" in
+              Success) break ;;
+              Failed|Cancelled|TimedOut|Cancelling) break ;;
+            esac
+            sleep 10
+          done
+          echo "------ output (last 24 KB) ------"
+          aws ssm get-command-invocation --command-id "$ID" --instance-id "$INSTANCE_ID" \
+            --query '[StandardOutputContent, StandardErrorContent]' --output text | tail -c 24000
+          [ "$STATUS" = "Success" ] || { echo "::error::Deploy failed ($STATUS)"; exit 1; }
+          echo "### ✅ Deployed \`${SHA:0:7}\` to \`$INSTANCE_ID\`" >> "$GITHUB_STEP_SUMMARY"
