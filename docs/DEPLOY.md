@@ -42,6 +42,29 @@ terraform plan
 terraform apply
 ```
 
+## 1C. Domain + HTTPS (AWS Route 53)
+
+`http://<IP>` အစား `https://academy.your-domain.com` နဲ့ ဖွင့်ချင်ရင် —
+
+```
+Browser ──DNS──► Route 53 (A record) ──► Elastic IP
+        ──HTTPS:443──► Caddy (Let's Encrypt cert, auto-renew) ──► nginx (web) ──► api ──► db
+```
+
+1. **Domain ဝယ်** — AWS Console → Route 53 → *Registered domains* → *Register domain*။
+   ဝယ်ပြီးတာနဲ့ *Hosted zones* ထဲမှာ zone အလိုလိုပေါ်လာမယ် (၁၅ မိနစ် – နာရီအနည်းငယ်)။
+   တခြားမှာ ဝယ်ထားရင် Route 53 မှာ Hosted zone ဆောက်ပြီး NS record ၄ ခုကို domain ဝယ်ခဲ့တဲ့ဆိုဒ်မှာ ထည့်။
+2. `terraform.tfvars` မှာ —
+   ```hcl
+   hosted_zone = "your-domain.com"
+   subdomain   = "academy"        # "" ဆိုရင် your-domain.com ကိုယ်တိုင်
+   ```
+3. `terraform apply` → Terraform က Port 443 ဖွင့်၊ A record ဆောက်၊ VM မှာ Caddy နဲ့ HTTPS ကို သတ်မှတ်ပေးတယ်။
+4. `terraform output url` → `https://academy.your-domain.com/` (certificate ရဖို့ ၁–၂ မိနစ်)
+
+> VM ဆောက်ပြီးမှ domain ထည့်တာဆိုရင် `.env` ကို ပထမ boot မှာပဲ ရေးလို့ VM ကို ပြန်ဆောက်ရမယ် —
+> `terraform apply` က `user_data` ပြောင်းတာကြောင့် instance ကို အလိုလို replace လုပ်ပေးတယ် (DB data ပျက်မယ်)။
+
 ## 2. စစ်ဆေးရန်
 
 ```bash
@@ -72,7 +95,6 @@ terraform destroy
 
 ## Production အတွက် ထပ်လုပ်သင့်တာ
 
-- **HTTPS** — Domain ချိတ်ပြီး nginx ရှေ့မှာ Caddy / Certbot ထား၊ `.env` မှာ `COOKIE_SECURE=true`
 - **Managed database** — Azure Database for PostgreSQL / Amazon RDS သုံးပြီး `DATABASE_URL` ပြောင်း
 - **Secrets** — `.env` အစား Key Vault / AWS Secrets Manager
 - **Terraform state** — Azure Storage / S3 remote backend
@@ -86,4 +108,5 @@ terraform destroy
 | Site မပေါ် | Bootstrap log၊ `docker compose ps`၊ NSG/SG မှာ port 80 |
 | SSH `timed out` | IP ပြောင်းသွားလား → tfvars ပြင်ပြီး `terraform apply` |
 | `api` unhealthy | `docker compose logs api` — migration/DB password |
+| HTTPS cert မရ | `dig +short <domain>` က EIP ပြလား၊ SG မှာ 80/443၊ `docker compose logs caddy` |
 | Build အရမ်းကြာ / OOM | VM size ကြီးအောင် (B2ms / t3.medium) |

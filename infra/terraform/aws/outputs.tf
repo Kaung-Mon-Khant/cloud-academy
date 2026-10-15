@@ -3,7 +3,11 @@ output "public_ip" {
 }
 
 output "url" {
-  value = "http://${aws_eip.web.public_ip}/"
+  value = local.domain == "" ? "http://${aws_eip.web.public_ip}/" : "https://${local.domain}/"
+}
+
+output "domain" {
+  value = local.domain
 }
 
 output "ssh" {

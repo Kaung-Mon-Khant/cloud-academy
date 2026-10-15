@@ -130,6 +130,7 @@ resource "azurerm_linux_virtual_machine" "web" {
     repo_url   = var.repo_url
     repo_ref   = var.repo_ref
     admin_user = var.admin_username
+    domain     = ""
   }))
 
   depends_on = [azurerm_subnet_network_security_group_association.web]

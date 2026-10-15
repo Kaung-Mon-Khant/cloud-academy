@@ -48,3 +48,15 @@ variable "repo_ref" {
   type    = string
   default = "main"
 }
+
+variable "hosted_zone" {
+  type        = string
+  description = "Route 53 public hosted zone, e.g. example.com. Leave empty to skip DNS + HTTPS."
+  default     = ""
+}
+
+variable "subdomain" {
+  type        = string
+  description = "Optional subdomain, e.g. academy -> academy.example.com. Empty uses the apex (example.com)."
+  default     = ""
+}

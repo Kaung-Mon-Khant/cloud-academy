@@ -6,6 +6,6 @@ zone                = "1"
 vm_size             = "Standard_B2s"
 ssh_public_key_path = "~/.ssh/id_ed25519.pub"
 allowed_ssh_cidr    = "203.0.113.10/32" # ← your IP: curl -s https://ifconfig.me
-repo_url            = "https://github.com/<you>/cloud-academy.git"
+repo_url            = "https://github.com/Kaung-Mon-Khant/cloud-academy.git"
 repo_ref            = "main"
 auto_shutdown_time  = "2300"

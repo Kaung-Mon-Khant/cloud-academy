@@ -1,5 +1,7 @@
 locals {
-  name = "${var.project}-${var.environment}"
+  # domain: academy.example.com (subdomain set) or example.com (apex); empty -> no DNS/HTTPS
+  name   = "${var.project}-${var.environment}"
+  domain = var.hosted_zone == "" ? "" : (var.subdomain == "" ? var.hosted_zone : "${var.subdomain}.${var.hosted_zone}")
 }
 
 data "aws_availability_zones" "available" {
@@ -56,7 +58,7 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# ── Security group: SSH from your IP only, HTTP from anywhere ───────────────
+# ── Security group: SSH from your IP only, HTTP/HTTPS from anywhere ─────────
 resource "aws_security_group" "web" {
   name        = "${local.name}-web"
   description = "Cloud Academy web server"
@@ -80,6 +82,15 @@ resource "aws_vpc_security_group_ingress_rule" "http" {
   ip_protocol       = "tcp"
   from_port         = 80
   to_port           = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "https" {
+  security_group_id = aws_security_group.web.id
+  description       = "HTTPS"
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "tcp"
+  from_port         = 443
+  to_port           = 443
 }
 
 resource "aws_vpc_security_group_egress_rule" "all" {
@@ -106,6 +117,7 @@ resource "aws_instance" "web" {
     repo_url   = var.repo_url
     repo_ref   = var.repo_ref
     admin_user = "ubuntu"
+    domain     = local.domain
   })
   user_data_replace_on_change = true
 
@@ -130,4 +142,21 @@ resource "aws_eip" "web" {
   tags     = { Name = "${local.name}-eip" }
 
   depends_on = [aws_internet_gateway.main]
+}
+
+# ── DNS: Route 53 A record → Elastic IP (only when hosted_zone is set) ──────
+# The hosted zone must already exist (Route 53 creates it when you register a domain).
+data "aws_route53_zone" "main" {
+  count        = local.domain == "" ? 0 : 1
+  name         = var.hosted_zone
+  private_zone = false
+}
+
+resource "aws_route53_record" "web" {
+  count   = local.domain == "" ? 0 : 1
+  zone_id = data.aws_route53_zone.main[0].zone_id
+  name    = local.domain
+  type    = "A"
+  ttl     = 300
+  records = [aws_eip.web.public_ip]
 }

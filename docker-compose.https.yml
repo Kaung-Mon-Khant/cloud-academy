@@ -1,0 +1,27 @@
+# HTTPS overlay — adds Caddy (automatic Let's Encrypt) in front of `web`.
+# Used on the cloud VM when a domain is configured. Enable it via .env:
+#   COMPOSE_FILE=docker-compose.yml:docker-compose.https.yml
+#   DOMAIN=academy.example.com
+#   WEB_PORT=127.0.0.1:8080      # nginx no longer listens publicly
+#   COOKIE_SECURE=true
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # certificates — keep this volume
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_started
+
+volumes:
+  caddy_data:
+  caddy_config:
