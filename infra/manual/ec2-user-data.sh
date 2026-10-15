@@ -1,0 +1,75 @@
+#!/bin/bash
+# EC2 "User data" for a MANUAL (Console) launch — paste this whole file into
+# Launch instance → Advanced details → User data. Generated from infra/cloud-init/bootstrap.sh.tftpl.
+# DOMAIN is empty on purpose: the app starts on http://<Elastic-IP>/ first; HTTPS is enabled later (docs/MANUAL_EC2.md).
+# Logs: /var/log/cloud-academy-bootstrap.log
+set -euo pipefail
+exec > >(tee -a /var/log/cloud-academy-bootstrap.log) 2>&1
+
+APP_DIR=/opt/cloud-academy
+REPO_URL="https://github.com/Kaung-Mon-Khant/cloud-academy.git"
+REPO_REF="main"
+DOMAIN="" # empty -> plain HTTP on the public IP
+
+echo "==> [1/5] Swap (small VMs run out of memory while building the images)"
+if ! swapon --show | grep -q /swapfile; then
+  fallocate -l 2G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
+echo "==> [2/5] Packages"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y ca-certificates curl git openssl docker.io docker-compose-v2 unattended-upgrades
+systemctl enable --now docker
+usermod -aG docker "ubuntu" || true
+
+echo "==> [3/5] Source code"
+if [ ! -d "$APP_DIR/.git" ]; then
+  git clone --depth 1 --branch "$REPO_REF" "$REPO_URL" "$APP_DIR"
+else
+  git -C "$APP_DIR" fetch --depth 1 origin "$REPO_REF"
+  git -C "$APP_DIR" reset --hard FETCH_HEAD
+fi
+
+echo "==> [4/5] Secrets (generated once, kept on the VM only)"
+if [ ! -f "$APP_DIR/.env" ]; then
+  DB_PASS=$(openssl rand -hex 24)
+  JWT=$(openssl rand -base64 48 | tr -d '\n')
+  cat > "$APP_DIR/.env" <<EOF
+POSTGRES_USER=cloudacademy
+POSTGRES_PASSWORD=$DB_PASS
+POSTGRES_DB=cloudacademy
+JWT_SECRET=$JWT
+CORS_ORIGINS=
+SEED_ON_START=true
+EOF
+  if [ -n "$DOMAIN" ]; then
+    cat >> "$APP_DIR/.env" <<EOF
+# HTTPS via Caddy (docker-compose.https.yml)
+COMPOSE_FILE=docker-compose.yml:docker-compose.https.yml
+DOMAIN=$DOMAIN
+WEB_PORT=127.0.0.1:8080
+COOKIE_SECURE=true
+EOF
+  else
+    cat >> "$APP_DIR/.env" <<EOF
+WEB_PORT=80
+COOKIE_SECURE=false
+EOF
+  fi
+  chmod 600 "$APP_DIR/.env"
+fi
+
+echo "==> [5/5] Build and start"
+cd "$APP_DIR"
+docker compose up -d --build
+
+if [ -n "$DOMAIN" ]; then
+  echo "==> Done. Open https://$DOMAIN/ (certificate is issued automatically; DNS must point here)"
+else
+  echo "==> Done. Open http://<public-ip>/"
+fi
