@@ -19,13 +19,13 @@ export default fp(
       if (err instanceof HttpError) {
         return reply.status(err.statusCode).send({ error: { code: err.code, message: err.message } });
       }
-      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && (err as { code?: string }).code === 'P2025') {
         return reply.status(404).send({ error: { code: 'NOT_FOUND', message: 'Not found' } });
       }
       const status = (err as { statusCode?: number }).statusCode;
       if (status && status >= 400 && status < 500) {
         // Fastify / plugin errors (rate limit, bad JSON body, …)
-        return reply.status(status).send({ error: { code: 'REQUEST_ERROR', message: err.message } });
+        return reply.status(status).send({ error: { code: 'REQUEST_ERROR', message: (err as Error).message } });
       }
       req.log.error({ err }, 'Unhandled error');
       return reply.status(500).send({ error: { code: 'INTERNAL', message: 'Something went wrong' } });
