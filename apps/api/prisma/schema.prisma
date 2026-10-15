@@ -1,0 +1,126 @@
+// Cloud Academy data model.
+// Localized text (topic names, question prompts, explanations, flashcard definitions)
+// is stored as JSON: { "en": "...", "ja": "...", "my": "..." } — "en" is always present.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Provider {
+  AZURE
+  AWS
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Locale {
+  en
+  ja
+  my
+}
+
+model Topic {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  provider    Provider
+  order       Int
+  icon        String
+  name        Json
+  description Json
+  questions   Question[]
+  flashcards  Flashcard[]
+
+  @@index([provider, order])
+}
+
+model Question {
+  id          String     @id @default(cuid())
+  key         String     @unique // stable seed key, e.g. "azure-compute-01"
+  topicId     String
+  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  difficulty  Difficulty
+  multiple    Boolean    @default(false) // true = more than one correct option
+  prompt      Json
+  explanation Json
+  options     Option[]
+
+  @@index([topicId])
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  order      Int
+  text       String
+  isCorrect  Boolean
+
+  @@index([questionId])
+}
+
+model Flashcard {
+  id         String            @id @default(cuid())
+  key        String            @unique
+  topicId    String
+  topic      Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  term       String
+  definition Json
+  example    Json?
+  reviews    FlashcardReview[]
+
+  @@index([topicId])
+}
+
+model User {
+  id           String            @id @default(cuid())
+  email        String            @unique
+  name         String
+  passwordHash String
+  locale       Locale            @default(en)
+  createdAt    DateTime          @default(now())
+  attempts     QuizAttempt[]
+  reviews      FlashcardReview[]
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider  Provider
+  topicSlug String?
+  score     Int
+  total     Int
+  durationS Int
+  answers   Json // [{ questionId, optionIds, correct }]
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// SM-2 spaced repetition state, one row per (user, card)
+model FlashcardReview {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  flashcardId String
+  flashcard   Flashcard @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  ease        Float     @default(2.5)
+  interval    Int       @default(0) // days
+  repetitions Int       @default(0)
+  dueAt       DateTime  @default(now())
+  lastGrade   Int?
+  reviewedAt  DateTime  @default(now())
+
+  @@unique([userId, flashcardId])
+  @@index([userId, dueAt])
+}

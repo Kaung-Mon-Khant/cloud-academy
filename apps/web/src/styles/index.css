@@ -1,0 +1,158 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode (toggled by the theme switcher / system preference). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens
+ * Layout: one centered console column (max 72rem) with a blueprint grid behind it;
+ * the accent hue follows the selected cloud — Azure = cobalt, AWS = amber.
+ */
+:root {
+  --bg: #f4f6fa;
+  --bg-grid: rgb(15 30 60 / 0.05);
+  --surface: #ffffff;
+  --surface-2: #eef2f8;
+  --line: #dbe2ec;
+  --ink: #0f1a2b;
+  --ink-2: #4a5a70;
+  --ink-3: #7b8aa0;
+  --good: #14804a;
+  --good-soft: #e3f4ea;
+  --bad: #c2362f;
+  --bad-soft: #fbe6e4;
+  --warn: #a8670e;
+  --warn-soft: #fbf0dc;
+  --accent: #1f66e0;
+  --accent-ink: #ffffff;
+  --accent-soft: #e2ecfd;
+  --terminal: #0b1220;
+  color-scheme: light;
+}
+:root[data-provider='aws'] {
+  --accent: #c76a00;
+  --accent-ink: #ffffff;
+  --accent-soft: #fdeeda;
+}
+
+.dark {
+  --bg: #0a0f1a;
+  --bg-grid: rgb(140 170 220 / 0.06);
+  --surface: #111827;
+  --surface-2: #172133;
+  --line: #233047;
+  --ink: #e6edf7;
+  --ink-2: #a3b1c6;
+  --ink-3: #6f8098;
+  --good: #46c986;
+  --good-soft: #10301f;
+  --bad: #f26d64;
+  --bad-soft: #3a1614;
+  --warn: #e9ad4b;
+  --warn-soft: #3a2a10;
+  --accent: #5aa2ff;
+  --accent-ink: #06101f;
+  --accent-soft: #12284a;
+  --terminal: #060a12;
+  color-scheme: dark;
+}
+.dark[data-provider='aws'] {
+  --accent: #ffad42;
+  --accent-ink: #1a0e00;
+  --accent-soft: #3a2608;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-terminal: var(--terminal);
+}
+
+@theme {
+  --font-display: 'Bricolage Grotesque', 'Geist', 'Noto Sans JP', 'Noto Sans Myanmar', system-ui, sans-serif;
+  --font-sans: 'Geist', 'Noto Sans JP', 'Noto Sans Myanmar', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* Script-specific families and line height (Myanmar glyphs are tall). */
+html[lang='ja'] {
+  --font-sans: 'Noto Sans JP', 'Geist', system-ui, sans-serif;
+  --font-display: 'Noto Sans JP', 'Bricolage Grotesque', system-ui, sans-serif;
+}
+html[lang='my'] {
+  --font-sans: 'Noto Sans Myanmar', 'Myanmar Text', 'Geist', system-ui, sans-serif;
+  --font-display: 'Noto Sans Myanmar', 'Myanmar Text', 'Bricolage Grotesque', system-ui, sans-serif;
+}
+html[lang='my'] body {
+  line-height: 1.9;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    background-image:
+      linear-gradient(var(--bg-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-attachment: fixed;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium tracking-[0.14em] uppercase text-ink-3;
+  }
+  .panel {
+    @apply rounded-2xl border border-line bg-surface;
+  }
+  .flip-scene {
+    perspective: 1400px;
+  }
+  .flip-face {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
