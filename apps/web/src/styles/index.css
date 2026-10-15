@@ -27,6 +27,8 @@
   --accent-ink: #ffffff;
   --accent-soft: #e2ecfd;
   --terminal: #0b1220;
+  --scrollbar: rgb(15 30 60 / 0.18);
+  --scrollbar-hover: rgb(15 30 60 / 0.32);
   color-scheme: light;
 }
 :root[data-provider='aws'] {
@@ -54,6 +56,8 @@
   --accent-ink: #06101f;
   --accent-soft: #12284a;
   --terminal: #060a12;
+  --scrollbar: rgb(160 185 225 / 0.16);
+  --scrollbar-hover: rgb(160 185 225 / 0.3);
   color-scheme: dark;
 }
 .dark[data-provider='aws'] {
@@ -105,6 +109,30 @@ html[lang='my'] body {
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Slim, theme-aware scrollbar (Chrome 121+, Edge, Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar) transparent;
+    scrollbar-gutter: stable;
+  }
+  html:hover {
+    scrollbar-color: var(--scrollbar-hover) transparent;
+  }
+  /* Safari / older Chromium */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover);
   }
   body {
     @apply bg-bg text-ink font-sans antialiased;
