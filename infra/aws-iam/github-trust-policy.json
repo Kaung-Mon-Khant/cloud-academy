@@ -4,7 +4,7 @@
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/token.actions.githubusercontent.com"
+        "Federated": "arn:aws:iam::231859261050:oidc-provider/token.actions.githubusercontent.com"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
@@ -12,7 +12,7 @@
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:Kaung-Mon-Khant/cloud-academy:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub": "repo:Kaung-Mon-Khant@126639472/cloud-academy@1420080715:ref:refs/heads/main"
         }
       }
     }

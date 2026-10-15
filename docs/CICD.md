@@ -55,7 +55,10 @@ IAM → **Identity providers** → *Add provider*
    - Permission ကို ဒီအဆင့်မှာ ဘာမှမရွေးဘဲ *Next*
    - Name: `github-actions-cloud-academy-deploy` → *Create role*
 2. Role ကိုဖွင့် → **Trust relationships** → *Edit* → `infra/aws-iam/github-trust-policy.json` နဲ့ တူမတူ စစ်
-   (`sub` က `repo:Kaung-Mon-Khant/cloud-academy:ref:refs/heads/main` — main branch ကပဲ deploy လုပ်ခွင့်)
+   (`sub` က `repo:Kaung-Mon-Khant@126639472/cloud-academy@1420080715:ref:refs/heads/main` — main branch ကပဲ deploy လုပ်ခွင့်)
+   > ⚠️ ဒီ repo ရဲ့ OIDC token က `owner@<id>/repo@<id>` ပုံစံ (immutable ID ပါ) နဲ့ ပို့တယ်။ Console wizard က ID မပါတဲ့
+   > `repo:owner/repo:...` ကို ထုတ်ပေးလို့ မကိုက်ဘဲ `Not authorized to perform sts:AssumeRoleWithWebIdentity` ဖြစ်တယ်။
+   > တကယ့် `sub` ကို Deploy workflow ရဲ့ **Debug** step မှာ ကြည့်ပြီး အတိအကျ ထည့်ပါ။
 3. **Permissions** → *Add permissions → Create inline policy* → **JSON** →
    `infra/aws-iam/github-deploy-permissions.json` ကို paste ပြီး
    `<ACCOUNT_ID>` (12 လုံး) နဲ့ `<INSTANCE_ID>` (`i-...`) ကို အစားထိုး → Name: `ssm-deploy-cloud-academy`
@@ -84,7 +87,7 @@ Log မှာ `Deployed abc1234` နဲ့ `✅ Deployed` ပေါ်ရင် 
 
 | Error | အဖြေ |
 |---|---|
-| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | Trust policy ရဲ့ repo/branch နာမည် (အကြီးအသေးပါ) စစ်၊ OIDC provider ရှိလား |
+| `Not authorized to perform sts:AssumeRoleWithWebIdentity` | Debug step ထဲက `sub` နဲ့ Trust policy ကို အတိအကျ တိုက် (`@<id>` ပါ/မပါ၊ အကြီးအသေး)၊ OIDC provider ရှိလား |
 | `InvalidInstanceId` | Instance က Fleet Manager မှာ မပေါ်သေး → Step 1၊ region မှန်လား |
 | `AccessDenied ... ssm:SendCommand` | Inline policy ထဲက ACCOUNT_ID / INSTANCE_ID |
 | Deploy `TimedOut` / `Killed` | t3.micro memory/disk → t3.small၊ disk 20 GB |
