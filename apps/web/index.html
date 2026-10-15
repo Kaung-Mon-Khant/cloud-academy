@@ -19,7 +19,7 @@
         var p = JSON.parse(localStorage.getItem('ca-preferences') || '{}').state || {};
         var t = p.theme || 'system';
         var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.classList.toggle('white', dark);
         document.documentElement.dataset.provider = (p.provider || 'AZURE').toLowerCase();
       } catch (e) {}
     </script>
