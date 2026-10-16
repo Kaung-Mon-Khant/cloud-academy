@@ -56,7 +56,11 @@ export function LessonPage() {
     if (provider) setProvider(provider);
   }, [provider, setProvider]);
 
-  useEffect(() => window.scrollTo({ top: 0 }), [slug]);
+  useEffect(() => {
+    // Braces matter: newer Chromium returns a Promise from scrollTo(), and React would
+    // try to call that Promise as the effect's cleanup ("destroy is not a function").
+    window.scrollTo({ top: 0 });
+  }, [slug]);
 
   const toggle = useMutation({
     mutationFn: async (done: boolean) => {

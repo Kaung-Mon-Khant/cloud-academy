@@ -25,7 +25,9 @@ export function QuizPage() {
   const [phase, setPhase] = useState<Phase>({ name: 'setup' });
 
   // Switching cloud mid-quiz would mix providers — go back to setup.
-  useEffect(() => setPhase({ name: 'setup' }), [provider]);
+  useEffect(() => {
+    setPhase({ name: 'setup' });
+  }, [provider]);
 
   const load = useMutation({
     mutationFn: (config: QuizConfig) => api.quizQuestions({ provider, ...config }),
