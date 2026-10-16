@@ -1,5 +1,13 @@
 {
-  "nav": { "home": "Learn", "quiz": "Quiz", "flashcards": "Flashcards", "dashboard": "Progress", "signIn": "Sign in", "signOut": "Sign out" },
+  "nav": {
+    "home": "Home",
+    "quiz": "Quiz",
+    "flashcards": "Flashcards",
+    "dashboard": "Progress",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "learn": "Lessons"
+  },
   "common": {
     "skip": "Skip to content",
     "error": "Something went wrong",
@@ -7,9 +15,18 @@
     "notFound": "This page doesn’t exist",
     "backHome": "Back to learning"
   },
-  "lang": { "label": "Language" },
-  "provider": { "label": "Cloud provider" },
-  "theme": { "label": "Theme", "system": "System", "light": "Light", "dark": "Dark" },
+  "lang": {
+    "label": "Language"
+  },
+  "provider": {
+    "label": "Cloud provider"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "home": {
     "eyebrow": "{{cloud}} learning lab",
     "titleA": "Master",
@@ -30,7 +47,9 @@
     "topicsEyebrow": "{{cloud}} curriculum",
     "topicsTitle": "Choose a topic",
     "counts": "{{q}} questions · {{c}} cards",
-    "practice": "Practice"
+    "practice": "Practice",
+    "startLearning": "Start learning",
+    "statLessons": "Lessons"
   },
   "quiz": {
     "title": "Practice quiz",
@@ -53,7 +72,11 @@
     "next": "Next question",
     "finish": "See results",
     "resultsTitle": "Quiz complete",
-    "verdict": { "great": "Excellent work!", "good": "Good progress", "keepGoing": "Keep practising" },
+    "verdict": {
+      "great": "Excellent work!",
+      "good": "Good progress",
+      "keepGoing": "Keep practising"
+    },
     "score": "You answered {{score}} of {{total}} correctly.",
     "saved": "Saved to your progress",
     "notSaved": "Not saved —",
@@ -62,7 +85,10 @@
     "review": "Review answers",
     "yourAnswer": "Your answer",
     "correctAnswer": "Correct answer",
-    "noQuestions": "No questions match these settings."
+    "noQuestions": "No questions match these settings.",
+    "exam": "Exam",
+    "allExams": "All exams",
+    "reviewLesson": "Read the lesson for this topic"
   },
   "flashcards": {
     "eyebrow": "Spaced repetition",
@@ -123,7 +149,9 @@
     "date": "Date",
     "cloud": "Cloud",
     "score": "Score",
-    "time": "Time"
+    "time": "Time",
+    "lessons": "Lessons completed",
+    "lessonsHint": "{{done}} of {{total}} lessons"
   },
   "auth": {
     "signInTitle": "Welcome back",
@@ -140,5 +168,43 @@
     "noAccount": "New here?",
     "haveAccount": "Already have an account?",
     "createAccount": "Create an account"
+  },
+  "learn": {
+    "eyebrow": "{{cloud}} learning path",
+    "title": "Lessons",
+    "subtitle": "Read a lesson, then lock it in with the topic quiz and flashcards. Every lesson is written in English, 日本語 and မြန်မာ.",
+    "FOUNDATIONAL": "Foundational",
+    "ASSOCIATE": "Associate",
+    "minutes": "{{count}} min read",
+    "sections_one": "{{count}} section",
+    "sections_other": "{{count}} sections",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions",
+    "completed": "Completed",
+    "start": "Start lesson",
+    "again": "Read again",
+    "progress": "{{done}} of {{total}} lessons completed",
+    "objectives": "In this lesson you will",
+    "contents": "Contents",
+    "summary": "Key takeaways",
+    "markDone": "Mark as complete",
+    "done": "Completed",
+    "undo": "Mark as not done",
+    "signInToTrack": "Sign in to track your progress",
+    "practice": "Practice this topic",
+    "cards": "Study flashcards",
+    "prev": "Previous",
+    "next": "Next",
+    "all": "All lessons",
+    "notFound": "Lesson not found",
+    "allExams": "All exams",
+    "whatNext": "Ready to test yourself?",
+    "whatNextBody": "Take the {{count}}-question quiz for this topic or review its flashcards.",
+    "tip": "Tip",
+    "exam": "Exam focus",
+    "warn": "Watch out",
+    "memory": "Memory trick",
+    "copy": "Copy",
+    "copied": "Copied"
   }
 }

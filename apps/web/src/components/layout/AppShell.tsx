@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { BarChart3, Home, Layers, ListChecks, LogIn, LogOut } from 'lucide-react';
+import { BarChart3, BookOpen, Home, Layers, ListChecks, LogIn, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useThemeSync } from '@/hooks/useThemeSync';
@@ -13,6 +13,7 @@ import { Skeleton } from '../ui/States';
 
 const NAV = [
   { to: '/', key: 'nav.home', icon: Home, end: true },
+  { to: '/learn', key: 'nav.learn', icon: BookOpen },
   { to: '/quiz', key: 'nav.quiz', icon: ListChecks },
   { to: '/flashcards', key: 'nav.flashcards', icon: Layers },
   { to: '/dashboard', key: 'nav.dashboard', icon: BarChart3 },
@@ -116,7 +117,7 @@ export function AppShell() {
 
       {/* Mobile tab bar */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-line bg-surface/95 backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-surface/95 backdrop-blur-xl md:hidden"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
         aria-label="Main"
       >

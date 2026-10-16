@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { ArrowRight, Brain, Globe2, Layers, ListChecks, Repeat } from 'lucide-react';
+import { ArrowRight, BookOpen, Brain, Globe2, Layers, ListChecks, Repeat } from 'lucide-react';
 import { useTopics } from '@/hooks/useTopics';
 import { useLocalized } from '@/lib/content';
 import { usePreferences } from '@/stores/preferences';
@@ -19,35 +19,38 @@ export function HomePage() {
   const cloud = provider === 'AZURE' ? 'Azure' : 'AWS';
 
   return (
-    <div className="grid gap-16">
+    <div className="grid gap-12">
       {/* Hero */}
       <section className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr]">
         <div className="grid gap-6">
           <p className="eyebrow flex items-center gap-2">
             <span className="size-1.5 rounded-full bg-accent" /> {t('home.eyebrow', { cloud })}
           </p>
-          <h1 className="text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-6xl">
+          <h1 className="text-3xl leading-[1.1] font-extrabold tracking-tight sm:text-5xl">
             {t('home.titleA')} <span className="text-accent">{cloud}</span> {t('home.titleB')}
           </h1>
-          <p className="max-w-xl text-lg text-ink-2">{t('home.subtitle')}</p>
+          <p className="max-w-xl text-base text-ink-2 sm:text-lg">{t('home.subtitle')}</p>
           <div className="flex flex-wrap gap-3">
-            <Link to="/quiz" className={buttonStyles('primary', 'lg')}>
+            <Link to="/learn" className={buttonStyles('primary', 'lg')}>
+              <BookOpen className="size-5" aria-hidden /> {t('home.startLearning')}
+            </Link>
+            <Link to="/quiz" className={buttonStyles('outline', 'lg')}>
               <ListChecks className="size-5" aria-hidden /> {t('home.startQuiz')}
             </Link>
-            <Link to="/flashcards" className={buttonStyles('outline', 'lg')}>
+            <Link to="/flashcards" className={buttonStyles('ghost', 'lg')}>
               <Layers className="size-5" aria-hidden /> {t('home.reviewCards')}
             </Link>
           </div>
           <dl className="mt-2 flex flex-wrap gap-8">
             {[
-              { k: t('home.statTopics'), v: topics.data?.length },
+              { k: t('home.statLessons'), v: topics.data?.filter((tp) => tp.lesson).length },
               { k: t('home.statQuestions'), v: totals.q },
               { k: t('home.statCards'), v: totals.c },
               { k: t('home.statLanguages'), v: 3 },
             ].map((s) => (
               <div key={s.k}>
                 <dt className="eyebrow">{s.k}</dt>
-                <dd className="font-display text-3xl font-extrabold tabular-nums">{topics.isLoading ? '–' : s.v}</dd>
+                <dd className="font-display text-2xl font-extrabold tabular-nums">{topics.isLoading ? '–' : s.v}</dd>
               </div>
             ))}
           </dl>
@@ -84,22 +87,22 @@ export function HomePage() {
         </div>
 
         {topics.isLoading ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-52" />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 8 }, (_, i) => (
+              <Skeleton key={i} className="h-44" />
             ))}
           </div>
         ) : topics.isError ? (
           <ErrorState error={topics.error} onRetry={() => void topics.refetch()} />
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {topics.data?.map((tp, i) => (
               <motion.article
                 key={tp.slug}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="panel group grid content-between gap-5 p-5 transition hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-lg hover:shadow-black/5"
+                className="panel group grid content-between gap-4 p-4 transition hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-lg hover:shadow-black/5"
               >
                 <div className="grid gap-3">
                   <div className="flex items-center justify-between">
@@ -108,8 +111,8 @@ export function HomePage() {
                     </span>
                     <span className="font-mono text-xs text-ink-3">{String(i + 1).padStart(2, '0')}</span>
                   </div>
-                  <h3 className="text-lg font-bold">{loc(tp.name)}</h3>
-                  <p className="text-sm text-ink-2">{loc(tp.description)}</p>
+                  <h3 className="text-base font-bold">{loc(tp.name)}</h3>
+                  <p className="line-clamp-3 text-sm text-ink-2">{loc(tp.description)}</p>
                 </div>
                 <div className="flex items-center justify-between border-t border-line pt-4 text-sm">
                   <span className="text-ink-3">
@@ -118,6 +121,9 @@ export function HomePage() {
                   <div className="flex gap-1">
                     <Link to={`/flashcards?topic=${tp.slug}`} className={buttonStyles('ghost', 'sm')} aria-label={`${t('nav.flashcards')}: ${loc(tp.name)}`}>
                       <Layers className="size-4" aria-hidden />
+                    </Link>
+                    <Link to={`/learn/${tp.slug}`} className={buttonStyles('ghost', 'sm')} aria-label={`${t('nav.learn')}: ${loc(tp.name)}`}>
+                      <BookOpen className="size-4" aria-hidden />
                     </Link>
                     <Link to={`/quiz?topic=${tp.slug}`} className={buttonStyles('secondary', 'sm')}>
                       {t('home.practice')} <ArrowRight className="size-3.5" aria-hidden />

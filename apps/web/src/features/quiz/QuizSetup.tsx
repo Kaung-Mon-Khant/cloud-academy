@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Play } from 'lucide-react';
 import { useTopics } from '@/hooks/useTopics';
-import { useLocalized } from '@/lib/content';
+import { EXAMS_BY_PROVIDER, useLocalized } from '@/lib/content';
 import { cn } from '@/lib/cn';
-import type { Difficulty } from '@/lib/types';
+import type { Difficulty, Exam } from '@/lib/types';
+import { usePreferences } from '@/stores/preferences';
 import { Button } from '@/components/ui/Button';
 
-export type QuizConfig = { topic?: string; difficulty?: Difficulty; limit: number };
+export type QuizConfig = { topic?: string; difficulty?: Difficulty; exam?: Exam; limit: number };
 
 function Segmented<T extends string | number>({
   value,
@@ -31,7 +32,7 @@ function Segmented<T extends string | number>({
             aria-pressed={o.value === value}
             onClick={() => onChange(o.value)}
             className={cn(
-              'h-10 rounded-xl border px-4 text-sm font-medium transition',
+              'h-9 rounded-lg border px-3.5 text-sm font-medium transition',
               o.value === value ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-surface text-ink-2 hover:border-ink-3',
             )}
           >
@@ -50,13 +51,15 @@ export function QuizSetup({ initialTopic, onStart }: { initialTopic?: string; on
   const [topic, setTopic] = useState(initialTopic ?? '');
   const [limit, setLimit] = useState(10);
   const [difficulty, setDifficulty] = useState<Difficulty | ''>('');
+  const [exam, setExam] = useState<Exam | ''>('');
+  const provider = usePreferences((s) => s.provider);
 
   return (
     <form
-      className="panel grid gap-7 p-6 sm:p-8"
+      className="panel grid gap-6 p-5 sm:p-6"
       onSubmit={(e) => {
         e.preventDefault();
-        onStart({ topic: topic || undefined, difficulty: difficulty || undefined, limit });
+        onStart({ topic: topic || undefined, difficulty: difficulty || undefined, exam: exam || undefined, limit });
       }}
     >
       <div>
@@ -67,7 +70,7 @@ export function QuizSetup({ initialTopic, onStart }: { initialTopic?: string; on
           id="quiz-topic"
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          className="h-11 w-full rounded-xl border border-line bg-surface px-3 text-sm"
+          className="h-10 w-full rounded-lg border border-line bg-surface px-3 text-sm"
         >
           <option value="">{t('quiz.allTopics')}</option>
           {topics.data?.map((tp) => (
@@ -82,7 +85,13 @@ export function QuizSetup({ initialTopic, onStart }: { initialTopic?: string; on
         label={t('quiz.count')}
         value={limit}
         onChange={setLimit}
-        options={[5, 10, 20].map((n) => ({ value: n, label: String(n) }))}
+        options={[10, 20, 30, 50].map((n) => ({ value: n, label: String(n) }))}
+      />
+      <Segmented
+        label={t('quiz.exam')}
+        value={exam}
+        onChange={setExam}
+        options={[{ value: '' as const, label: t('quiz.allExams') }, ...EXAMS_BY_PROVIDER[provider].map((e) => ({ value: e, label: e }))]}
       />
       <Segmented
         label={t('quiz.difficulty')}

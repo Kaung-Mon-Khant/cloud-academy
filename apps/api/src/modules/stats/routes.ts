@@ -1,5 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import { parse } from '../../lib/http.js';
 
 const statsQuery = z.object({
@@ -43,7 +44,7 @@ export const statsRoutes: FastifyPluginAsync = async (app) => {
     const now = new Date();
     const dayOf = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' });
 
-    const [attempts, reviewCount, dueCount, mastered, reviewDates] = await Promise.all([
+    const [attempts, reviewCount, dueCount, mastered, reviewDates, lessonsDone, lessonsTotal] = await Promise.all([
       app.prisma.quizAttempt.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' },
@@ -57,6 +58,8 @@ export const statsRoutes: FastifyPluginAsync = async (app) => {
         where: { userId, reviewedAt: { gte: new Date(now.getTime() - 400 * 86_400_000) } },
         select: { reviewedAt: true },
       }),
+      app.prisma.lessonProgress.findMany({ where: { userId }, select: { completedAt: true } }),
+      app.prisma.topic.count({ where: { lesson: { not: Prisma.DbNull } } }),
     ]);
 
     // Per-topic accuracy from individual answers
@@ -79,6 +82,7 @@ export const statsRoutes: FastifyPluginAsync = async (app) => {
     const activeDays = new Set<string>([
       ...attempts.map((a) => dayOf.format(a.createdAt)),
       ...reviewDates.map((r) => dayOf.format(r.reviewedAt)),
+      ...lessonsDone.map((l) => dayOf.format(l.completedAt)),
     ]);
     const totalQuestions = attempts.reduce((s, a) => s + a.total, 0);
     const totalCorrect = attempts.reduce((s, a) => s + a.score, 0);
@@ -91,6 +95,7 @@ export const statsRoutes: FastifyPluginAsync = async (app) => {
         bestScore: attempts.reduce((best, a) => Math.max(best, a.total ? a.score / a.total : 0), 0),
       },
       flashcards: { reviewed: reviewCount, due: dueCount, mastered },
+      lessons: { completed: lessonsDone.length, total: lessonsTotal },
       streak: computeStreak(activeDays, dayOf.format(now)),
       activity: [...activeDays].sort(),
       topics: [...perTopic.values()].sort((a, b) => a.correct / a.total - b.correct / b.total),

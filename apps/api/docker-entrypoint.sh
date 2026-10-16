@@ -2,11 +2,11 @@
 set -e
 
 echo "→ Applying database migrations"
-npx prisma migrate deploy
+prisma migrate deploy --schema prisma/schema.prisma
 
 if [ "${SEED_ON_START:-true}" = "true" ]; then
   echo "→ Seeding learning content (idempotent)"
-  npx tsx prisma/seed.ts
+  node dist-seed/prisma/seed.js
 fi
 
 echo "→ Starting API"

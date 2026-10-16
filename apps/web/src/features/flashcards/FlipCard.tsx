@@ -9,7 +9,7 @@ export function FlipCard({ card, flipped, onFlip }: { card: Flashcard; flipped: 
   const { t } = useTranslation();
   const loc = useLocalized();
 
-  const face = 'flip-face absolute inset-0 grid content-between gap-4 rounded-3xl border p-7 sm:p-10';
+  const face = 'flip-face absolute inset-0 grid content-between gap-4 rounded-3xl border p-6 sm:p-8';
 
   return (
     <div className="flip-scene">
@@ -27,7 +27,7 @@ export function FlipCard({ card, flipped, onFlip }: { card: Flashcard; flipped: 
             <Badge tone="accent">{loc(card.topic.name)}</Badge>
             <span className="eyebrow">{t('flashcards.term')}</span>
           </div>
-          <h2 className="text-center text-3xl font-extrabold break-words sm:text-4xl">{card.term}</h2>
+          <h2 className="text-center text-2xl font-extrabold break-words sm:text-3xl">{card.term}</h2>
           <p className="flex items-center justify-center gap-2 text-sm text-ink-3">
             <RefreshCw className="size-3.5" aria-hidden /> {t('flashcards.tapToFlip')}
           </p>

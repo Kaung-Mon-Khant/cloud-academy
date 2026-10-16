@@ -55,7 +55,7 @@ export function QuizPage() {
     <div className="mx-auto grid max-w-3xl gap-8">
       <header className="grid gap-2">
         <p className="eyebrow">{provider === 'AZURE' ? 'az quiz start' : 'aws quiz start'}</p>
-        <h1 className="text-3xl font-extrabold sm:text-4xl">{t('quiz.title')}</h1>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">{t('quiz.title')}</h1>
         <p className="text-ink-2">{t('quiz.subtitle')}</p>
       </header>
 

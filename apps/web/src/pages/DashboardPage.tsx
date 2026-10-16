@@ -2,7 +2,7 @@ import { Link, Navigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { Award, Flame, Layers, ListChecks, Target, type LucideIcon } from 'lucide-react';
+import { BookOpen, Award, Flame, Layers, ListChecks, Target, type LucideIcon } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useLocalized } from '@/lib/content';
 import { useAuth } from '@/hooks/useAuth';
@@ -14,12 +14,12 @@ import { EmptyState, ErrorState, Skeleton } from '@/components/ui/States';
 
 function StatTile({ icon: Icon, label, value, hint }: { icon: LucideIcon; label: string; value: string; hint?: string }) {
   return (
-    <div className="panel grid gap-1 p-5">
+    <div className="panel grid gap-1 p-4">
       <div className="flex items-center justify-between">
         <span className="eyebrow">{label}</span>
         <Icon className="size-4 text-accent" aria-hidden />
       </div>
-      <span className="font-display text-3xl font-extrabold tabular-nums">{value}</span>
+      <span className="font-display text-2xl font-extrabold tabular-nums">{value}</span>
       {hint && <span className="text-xs text-ink-3">{hint}</span>}
     </div>
   );
@@ -43,7 +43,7 @@ export function DashboardPage() {
     <div className="grid gap-8">
       <header className="grid gap-2">
         <p className="eyebrow">{t('dashboard.eyebrow')}</p>
-        <h1 className="text-3xl font-extrabold sm:text-4xl">{t('dashboard.title', { name: user.name })}</h1>
+        <h1 className="text-2xl font-extrabold sm:text-3xl">{t('dashboard.title', { name: user.name })}</h1>
       </header>
 
       {stats.isLoading ? (
@@ -56,7 +56,8 @@ export function DashboardPage() {
         <ErrorState error={stats.error} onRetry={() => void stats.refetch()} />
       ) : s ? (
         <>
-          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+            <StatTile icon={BookOpen} label={t('dashboard.lessons')} value={`${s.lessons?.completed ?? 0}/${s.lessons?.total ?? 0}`} hint={t('dashboard.lessonsHint', { done: s.lessons?.completed ?? 0, total: s.lessons?.total ?? 0 })} />
             <StatTile icon={Flame} label={t('dashboard.streak')} value={t('dashboard.days', { count: s.streak })} />
             <StatTile icon={Target} label={t('dashboard.accuracy')} value={pct(s.quizzes.accuracy)} hint={t('dashboard.answered', { count: s.quizzes.questionsAnswered })} />
             <StatTile icon={Layers} label={t('dashboard.due')} value={String(s.flashcards.due)} hint={t('dashboard.reviewedCards', { count: s.flashcards.reviewed })} />

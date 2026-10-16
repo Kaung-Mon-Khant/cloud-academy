@@ -5,6 +5,8 @@ import { HomePage } from '@/pages/HomePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 
 // Heavier pages are code-split.
+const LearnPage = lazy(() => import('@/pages/LearnPage').then((m) => ({ default: m.LearnPage })));
+const LessonPage = lazy(() => import('@/pages/LessonPage').then((m) => ({ default: m.LessonPage })));
 const QuizPage = lazy(() => import('@/pages/QuizPage').then((m) => ({ default: m.QuizPage })));
 const FlashcardsPage = lazy(() => import('@/pages/FlashcardsPage').then((m) => ({ default: m.FlashcardsPage })));
 const DashboardPage = lazy(() => import('@/pages/DashboardPage').then((m) => ({ default: m.DashboardPage })));
@@ -16,6 +18,8 @@ const router = createBrowserRouter([
     element: <AppShell />,
     children: [
       { index: true, element: <HomePage /> },
+      { path: 'learn', element: <LearnPage /> },
+      { path: 'learn/:slug', element: <LessonPage /> },
       { path: 'quiz', element: <QuizPage /> },
       { path: 'flashcards', element: <FlashcardsPage /> },
       { path: 'dashboard', element: <DashboardPage /> },

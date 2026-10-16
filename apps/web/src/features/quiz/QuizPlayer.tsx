@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, CheckCircle2, Clock, Lightbulb, XCircle } from 'lucide-react';
+import { Link } from 'react-router';
+import { ArrowRight, BookOpen, CheckCircle2, Clock, Lightbulb, XCircle } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useLocalized } from '@/lib/content';
 import { cn } from '@/lib/cn';
@@ -109,15 +110,20 @@ export function QuizPlayer({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -24 }}
           transition={{ duration: 0.22, ease: [0.2, 0.9, 0.25, 1] }}
-          className="panel grid gap-6 p-6 sm:p-8"
+          className="panel grid gap-5 p-5 sm:p-6"
         >
           <header className="grid gap-3">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="accent">{loc(q.topic.name)}</Badge>
               <Badge tone={difficultyTone[q.difficulty]}>{t(`quiz.${q.difficulty.toLowerCase()}`)}</Badge>
               {q.multiple && <Badge>{t('quiz.selectAll')}</Badge>}
+              {q.exams.map((e) => (
+                <Badge key={e} className="font-mono text-[10.5px]">
+                  {e}
+                </Badge>
+              ))}
             </div>
-            <h2 className="text-xl leading-snug font-bold sm:text-2xl">{loc(q.prompt)}</h2>
+            <h2 className="text-lg leading-snug font-bold sm:text-xl">{loc(q.prompt)}</h2>
           </header>
 
           <div className="grid gap-3" role={q.multiple ? 'group' : 'radiogroup'}>
@@ -137,7 +143,7 @@ export function QuizPlayer({
                   animate={state === 'wrong' ? { x: [0, -6, 6, -3, 0] } : { x: 0 }}
                   transition={{ duration: 0.3 }}
                   className={cn(
-                    'group flex items-center gap-4 rounded-xl border-2 px-4 py-3.5 text-left transition-colors',
+                    'group flex items-center gap-4 rounded-xl border-2 px-4 py-3 text-left transition-colors',
                     state === 'idle' && 'border-line bg-surface hover:border-ink-3',
                     state === 'selected' && 'border-accent bg-accent-soft',
                     state === 'right' && 'border-good bg-good-soft',
@@ -175,10 +181,15 @@ export function QuizPlayer({
                   {result.correct ? <CheckCircle2 className="size-4" /> : <XCircle className="size-4" />}
                   {result.correct ? t('quiz.correct') : t('quiz.incorrect')}
                 </p>
-                <p className="flex gap-2 text-sm text-ink">
+                <p className="flex gap-2 text-sm leading-relaxed text-ink">
                   <Lightbulb className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
                   {loc(result.explanation)}
                 </p>
+                {!result.correct && (
+                  <Link to={`/learn/${q.topic.slug}`} target="_blank" className="mt-2 ml-6 inline-flex items-center gap-1 text-xs font-medium text-accent hover:underline">
+                    <BookOpen className="size-3.5" aria-hidden /> {t('quiz.reviewLesson')}
+                  </Link>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

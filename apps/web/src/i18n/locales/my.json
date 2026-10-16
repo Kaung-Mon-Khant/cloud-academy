@@ -1,5 +1,13 @@
 {
-  "nav": { "home": "လေ့လာ", "quiz": "Quiz", "flashcards": "Flashcard", "dashboard": "တိုးတက်မှု", "signIn": "ဝင်ရန်", "signOut": "ထွက်ရန်" },
+  "nav": {
+    "home": "ပင်မ",
+    "quiz": "Quiz",
+    "flashcards": "Flashcard",
+    "dashboard": "တိုးတက်မှု",
+    "signIn": "ဝင်ရန်",
+    "signOut": "ထွက်ရန်",
+    "learn": "သင်ခန်းစာ"
+  },
   "common": {
     "skip": "အကြောင်းအရာသို့ ကျော်ရန်",
     "error": "တစ်ခုခု မှားသွားပါတယ်",
@@ -7,9 +15,18 @@
     "notFound": "ဒီစာမျက်နှာ မရှိပါ",
     "backHome": "လေ့လာရေးသို့ ပြန်သွားရန်"
   },
-  "lang": { "label": "ဘာသာစကား" },
-  "provider": { "label": "Cloud" },
-  "theme": { "label": "Theme", "system": "System", "light": "အလင်း", "dark": "အမှောင်" },
+  "lang": {
+    "label": "ဘာသာစကား"
+  },
+  "provider": {
+    "label": "Cloud"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "အလင်း",
+    "dark": "အမှောင်"
+  },
   "home": {
     "eyebrow": "{{cloud}} လေ့လာရေး Lab",
     "titleA": "",
@@ -30,7 +47,9 @@
     "topicsEyebrow": "{{cloud}} သင်ရိုး",
     "topicsTitle": "Topic ရွေးပါ",
     "counts": "မေးခွန်း {{q}} · Card {{c}}",
-    "practice": "လေ့ကျင့်"
+    "practice": "လေ့ကျင့်",
+    "startLearning": "စလေ့လာမယ်",
+    "statLessons": "သင်ခန်းစာ"
   },
   "quiz": {
     "title": "လေ့ကျင့်ရေး Quiz",
@@ -53,7 +72,11 @@
     "next": "နောက်မေးခွန်း",
     "finish": "ရလဒ်ကြည့်မယ်",
     "resultsTitle": "Quiz ပြီးပါပြီ",
-    "verdict": { "great": "အရမ်းတော်တယ်!", "good": "ကောင်းကောင်း တိုးတက်နေတယ်", "keepGoing": "ဆက်လေ့ကျင့်ပါ" },
+    "verdict": {
+      "great": "အရမ်းတော်တယ်!",
+      "good": "ကောင်းကောင်း တိုးတက်နေတယ်",
+      "keepGoing": "ဆက်လေ့ကျင့်ပါ"
+    },
     "score": "{{total}} ခုထဲက {{score}} ခု မှန်ပါတယ်။",
     "saved": "တိုးတက်မှုထဲ သိမ်းပြီးပါပြီ",
     "notSaved": "မသိမ်းရသေး —",
@@ -62,7 +85,10 @@
     "review": "အဖြေများ ပြန်ကြည့်",
     "yourAnswer": "မင်းရဲ့အဖြေ",
     "correctAnswer": "အဖြေမှန်",
-    "noQuestions": "ဒီ setting နဲ့ ကိုက်တဲ့ မေးခွန်း မရှိပါ။"
+    "noQuestions": "ဒီ setting နဲ့ ကိုက်တဲ့ မေးခွန်း မရှိပါ။",
+    "exam": "Exam",
+    "allExams": "Exam အားလုံး",
+    "reviewLesson": "ဒီ topic ရဲ့ သင်ခန်းစာကို ဖတ်ရန်"
   },
   "flashcards": {
     "eyebrow": "Spaced repetition",
@@ -118,7 +144,9 @@
     "date": "ရက်စွဲ",
     "cloud": "Cloud",
     "score": "ရမှတ်",
-    "time": "အချိန်"
+    "time": "အချိန်",
+    "lessons": "ပြီးခဲ့တဲ့ သင်ခန်းစာ",
+    "lessonsHint": "{{total}} ခုထဲက {{done}} ခု"
   },
   "auth": {
     "signInTitle": "ပြန်လာတာ ကြိုဆိုပါတယ်",
@@ -135,5 +163,43 @@
     "noAccount": "အသစ်လား?",
     "haveAccount": "Account ရှိပြီးသားလား?",
     "createAccount": "Account ဖွင့်ရန်"
+  },
+  "learn": {
+    "eyebrow": "{{cloud}} လေ့လာရေး လမ်းကြောင်း",
+    "title": "သင်ခန်းစာများ",
+    "subtitle": "သင်ခန်းစာကို ဖတ်ပြီးရင် topic quiz နဲ့ flashcard တွေနဲ့ မှတ်မိအောင် လုပ်ပါ။ သင်ခန်းစာတိုင်းကို English・日本語・မြန်မာ နဲ့ ဖတ်လို့ရပါတယ်။",
+    "FOUNDATIONAL": "အခြေခံ",
+    "ASSOCIATE": "Associate",
+    "minutes": "{{count}} မိနစ်",
+    "sections_one": "အပိုင်း {{count}} ခု",
+    "sections_other": "အပိုင်း {{count}} ခု",
+    "questions_one": "မေးခွန်း {{count}} ခု",
+    "questions_other": "မေးခွန်း {{count}} ခု",
+    "completed": "ပြီးပြီ",
+    "start": "သင်ခန်းစာ စမယ်",
+    "again": "ပြန်ဖတ်မယ်",
+    "progress": "သင်ခန်းစာ {{total}} ခုထဲက {{done}} ခု ပြီးပြီ",
+    "objectives": "ဒီသင်ခန်းစာမှာ သင်ရမယ့်အရာ",
+    "contents": "မာတိကာ",
+    "summary": "အဓိက မှတ်ရမယ့်အချက်",
+    "markDone": "ပြီးပြီလို့ မှတ်မယ်",
+    "done": "ပြီးပြီ",
+    "undo": "မပြီးသေးဘူးလို့ ပြန်ပြောင်း",
+    "signInToTrack": "Progress သိမ်းဖို့ Sign in ဝင်ပါ",
+    "practice": "ဒီ topic ကို လေ့ကျင့်မယ်",
+    "cards": "Flashcard နဲ့ ပြန်လှန့်မယ်",
+    "prev": "ရှေ့",
+    "next": "နောက်",
+    "all": "သင်ခန်းစာ အားလုံး",
+    "notFound": "သင်ခန်းစာ မတွေ့ပါ",
+    "allExams": "Exam အားလုံး",
+    "whatNext": "နားလည်ပြီလား စစ်ကြည့်ရအောင်",
+    "whatNextBody": "ဒီ topic ရဲ့ မေးခွန်း {{count}} ခု quiz ကို ဖြေကြည့်ပါ ဒါမှမဟုတ် flashcard နဲ့ ပြန်လှန့်ပါ။",
+    "tip": "Tip",
+    "exam": "Exam အတွက်",
+    "warn": "သတိ",
+    "memory": "မှတ်နည်း",
+    "copy": "Copy",
+    "copied": "Copy ပြီးပြီ"
   }
 }

@@ -10,6 +10,8 @@ import type {
   User,
   Locale,
   Difficulty,
+  Exam,
+  LessonResponse,
 } from './types';
 
 export class ApiError extends Error {
@@ -63,7 +65,12 @@ export const api = {
 
   topics: (provider: Provider) => request<{ topics: Topic[] }>('GET', '/topics', { query: { provider } }),
 
-  quizQuestions: (q: { provider: Provider; topic?: string; difficulty?: Difficulty; limit: number }) =>
+  lesson: (slug: string) => request<LessonResponse>('GET', `/topics/${encodeURIComponent(slug)}/lesson`),
+  completeLesson: (slug: string) =>
+    request<{ completedAt: string }>('PUT', `/topics/${encodeURIComponent(slug)}/progress`),
+  uncompleteLesson: (slug: string) => request<void>('DELETE', `/topics/${encodeURIComponent(slug)}/progress`),
+
+  quizQuestions: (q: { provider: Provider; topic?: string; difficulty?: Difficulty; exam?: Exam; limit: number }) =>
     request<{ questions: QuizQuestion[] }>('GET', '/quiz/questions', { query: q }),
   checkAnswer: (body: { questionId: string; optionIds: string[] }) =>
     request<{ result: GradedAnswer }>('POST', '/quiz/check', { body }),

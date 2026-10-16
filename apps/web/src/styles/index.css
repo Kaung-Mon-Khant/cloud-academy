@@ -103,12 +103,14 @@ html[lang='my'] {
   --font-display: 'Noto Sans Myanmar', 'Myanmar Text', 'Bricolage Grotesque', system-ui, sans-serif;
 }
 html[lang='my'] body {
-  line-height: 1.9;
+  line-height: 1.75;
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* Compact scale: every rem-based size (type, spacing, controls) is ~6% smaller */
+    font-size: 93.75%;
     /* Slim, theme-aware scrollbar (Chrome 121+, Edge, Firefox) */
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar) transparent;
@@ -166,6 +168,19 @@ html[lang='my'] body {
   }
   .panel {
     @apply rounded-2xl border border-line bg-surface;
+  }
+  /* Lesson typography */
+  .lesson-prose {
+    @apply grid gap-4 text-[15px] leading-7 text-ink;
+  }
+  html[lang='my'] .lesson-prose {
+    @apply leading-8;
+  }
+  .lesson-prose code:not(pre code) {
+    @apply rounded-md bg-surface-2 px-1.5 py-0.5 font-mono text-[0.85em] text-ink;
+  }
+  .lesson-prose strong {
+    @apply font-semibold text-ink;
   }
   .flip-scene {
     perspective: 1400px;

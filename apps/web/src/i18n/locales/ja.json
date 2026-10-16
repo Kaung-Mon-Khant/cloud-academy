@@ -1,5 +1,13 @@
 {
-  "nav": { "home": "学習", "quiz": "クイズ", "flashcards": "単語カード", "dashboard": "進捗", "signIn": "ログイン", "signOut": "ログアウト" },
+  "nav": {
+    "home": "ホーム",
+    "quiz": "クイズ",
+    "flashcards": "単語カード",
+    "dashboard": "進捗",
+    "signIn": "ログイン",
+    "signOut": "ログアウト",
+    "learn": "レッスン"
+  },
   "common": {
     "skip": "本文へスキップ",
     "error": "エラーが発生しました",
@@ -7,9 +15,18 @@
     "notFound": "ページが見つかりません",
     "backHome": "学習に戻る"
   },
-  "lang": { "label": "言語" },
-  "provider": { "label": "クラウド" },
-  "theme": { "label": "テーマ", "system": "システム", "light": "ライト", "dark": "ダーク" },
+  "lang": {
+    "label": "言語"
+  },
+  "provider": {
+    "label": "クラウド"
+  },
+  "theme": {
+    "label": "テーマ",
+    "system": "システム",
+    "light": "ライト",
+    "dark": "ダーク"
+  },
   "home": {
     "eyebrow": "{{cloud}} 学習ラボ",
     "titleA": "",
@@ -30,7 +47,9 @@
     "topicsEyebrow": "{{cloud}} カリキュラム",
     "topicsTitle": "トピックを選ぶ",
     "counts": "{{q}} 問 · {{c}} 枚",
-    "practice": "練習"
+    "practice": "練習",
+    "startLearning": "学習を始める",
+    "statLessons": "レッスン"
   },
   "quiz": {
     "title": "練習クイズ",
@@ -53,7 +72,11 @@
     "next": "次の問題",
     "finish": "結果を見る",
     "resultsTitle": "クイズ完了",
-    "verdict": { "great": "素晴らしい！", "good": "順調です", "keepGoing": "もう少し練習しよう" },
+    "verdict": {
+      "great": "素晴らしい！",
+      "good": "順調です",
+      "keepGoing": "もう少し練習しよう"
+    },
     "score": "{{total}} 問中 {{score}} 問正解しました。",
     "saved": "進捗に保存しました",
     "notSaved": "未保存 —",
@@ -62,7 +85,10 @@
     "review": "回答を振り返る",
     "yourAnswer": "あなたの回答",
     "correctAnswer": "正解",
-    "noQuestions": "条件に合う問題がありません。"
+    "noQuestions": "条件に合う問題がありません。",
+    "exam": "試験",
+    "allExams": "すべての試験",
+    "reviewLesson": "このトピックのレッスンを読む"
   },
   "flashcards": {
     "eyebrow": "間隔反復",
@@ -118,7 +144,9 @@
     "date": "日時",
     "cloud": "クラウド",
     "score": "スコア",
-    "time": "時間"
+    "time": "時間",
+    "lessons": "完了したレッスン",
+    "lessonsHint": "{{total}} 件中 {{done}} 件"
   },
   "auth": {
     "signInTitle": "おかえりなさい",
@@ -135,5 +163,43 @@
     "noAccount": "初めてですか？",
     "haveAccount": "アカウントをお持ちですか？",
     "createAccount": "アカウントを作成"
+  },
+  "learn": {
+    "eyebrow": "{{cloud}} 学習パス",
+    "title": "レッスン",
+    "subtitle": "レッスンを読んだら、トピックのクイズとフラッシュカードで定着させましょう。すべてのレッスンは English・日本語・မြန်မာ で読めます。",
+    "FOUNDATIONAL": "基礎",
+    "ASSOCIATE": "アソシエイト",
+    "minutes": "約 {{count}} 分",
+    "sections_one": "{{count}} セクション",
+    "sections_other": "{{count}} セクション",
+    "questions_one": "{{count}} 問",
+    "questions_other": "{{count}} 問",
+    "completed": "完了",
+    "start": "レッスンを始める",
+    "again": "もう一度読む",
+    "progress": "{{total}} レッスン中 {{done}} 完了",
+    "objectives": "このレッスンで学ぶこと",
+    "contents": "目次",
+    "summary": "重要ポイント",
+    "markDone": "完了にする",
+    "done": "完了",
+    "undo": "未完了に戻す",
+    "signInToTrack": "ログインすると進捗を保存できます",
+    "practice": "このトピックを練習",
+    "cards": "フラッシュカードで復習",
+    "prev": "前へ",
+    "next": "次へ",
+    "all": "レッスン一覧",
+    "notFound": "レッスンが見つかりません",
+    "allExams": "すべての試験",
+    "whatNext": "理解度を確認しましょう",
+    "whatNextBody": "このトピックの {{count}} 問クイズに挑戦するか、フラッシュカードで復習しましょう。",
+    "tip": "ヒント",
+    "exam": "試験対策",
+    "warn": "注意",
+    "memory": "覚え方",
+    "copy": "コピー",
+    "copied": "コピーしました"
   }
 }

@@ -7,7 +7,7 @@ export function NotFoundPage() {
   return (
     <div className="grid place-items-center gap-4 py-20 text-center">
       <p className="font-mono text-sm text-ink-3">HTTP 404 · ResourceNotFound</p>
-      <h1 className="text-4xl font-extrabold">{t('common.notFound')}</h1>
+      <h1 className="text-3xl font-extrabold">{t('common.notFound')}</h1>
       <Link to="/" className={buttonStyles('primary')}>
         {t('common.backHome')}
       </Link>

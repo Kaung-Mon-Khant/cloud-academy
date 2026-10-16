@@ -9,6 +9,7 @@ const questionsQuery = z.object({
   provider: providerSchema,
   topic: z.string().max(80).optional(),
   difficulty: z.enum(['EASY', 'MEDIUM', 'HARD']).optional(),
+  exam: z.enum(['AZ-900', 'AZ-104', 'CLF-C02', 'SAA-C03']).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
@@ -39,6 +40,7 @@ export const quizRoutes: FastifyPluginAsync = async (app) => {
     const where: Prisma.QuestionWhereInput = {
       topic: { provider: q.provider, ...(q.topic ? { slug: q.topic } : {}) },
       ...(q.difficulty ? { difficulty: q.difficulty } : {}),
+      ...(q.exam ? { exams: { has: q.exam } } : {}),
     };
     const ids = await app.prisma.question.findMany({ where, select: { id: true } });
     const picked = shuffle(ids.map((r) => r.id)).slice(0, q.limit);
@@ -59,6 +61,7 @@ export const quizRoutes: FastifyPluginAsync = async (app) => {
           id: r.id,
           difficulty: r.difficulty,
           multiple: r.multiple,
+          exams: r.exams,
           prompt: r.prompt,
           topic: r.topic,
           options: shuffle(r.options),

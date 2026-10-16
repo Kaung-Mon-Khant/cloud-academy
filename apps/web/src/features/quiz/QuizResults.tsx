@@ -30,11 +30,11 @@ export function QuizResults({
 
   return (
     <div className="grid gap-8">
-      <section className="panel grid items-center gap-8 p-6 sm:grid-cols-[auto_1fr] sm:p-10">
-        <ProgressRing value={ratio} size={148} stroke={12} />
+      <section className="panel grid items-center gap-8 p-6 sm:grid-cols-[auto_1fr] sm:p-8">
+        <ProgressRing value={ratio} size={120} stroke={10} />
         <div className="grid gap-3">
           <p className="eyebrow">{t('quiz.resultsTitle')}</p>
-          <h2 className="text-3xl font-extrabold sm:text-4xl">{t(`quiz.verdict.${verdict}`)}</h2>
+          <h2 className="text-2xl font-extrabold sm:text-3xl">{t(`quiz.verdict.${verdict}`)}</h2>
           <p className="text-ink-2">{t('quiz.score', { score: result.score, total: result.total })}</p>
           <div className="flex flex-wrap gap-4 text-sm text-ink-2">
             <span className="flex items-center gap-1.5">

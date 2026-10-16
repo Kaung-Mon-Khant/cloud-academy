@@ -35,14 +35,6 @@ jobs:
             exit 1
           fi
 
-      - name: Debug — what GitHub sends to AWS (token itself is not printed)
-        run: |
-          echo "Role ARN : ${{ vars.AWS_ROLE_ARN }}"
-          echo "Region   : $AWS_REGION"
-          TOKEN=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" | jq -r .value)
-          echo "$TOKEN" | python3 -c "import sys,json,base64;p=sys.stdin.read().split('.')[1];p+='='*(-len(p)%4);c=json.loads(base64.urlsafe_b64decode(p));print(json.dumps({k:c.get(k) for k in ['sub','aud','iss','repository','ref','event_name']},indent=2))"
-
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -56,17 +48,21 @@ jobs:
           cat > deploy.sh <<'SCRIPT'
           set -euo pipefail
           cd /opt/cloud-academy
+          echo "Disk before:"; df -h / | tail -1
           git fetch --depth 1 origin "$SHA"
           git reset --hard FETCH_HEAD
           docker compose up -d --build --remove-orphans
+          # Keep the small root disk healthy: drop dangling images and build cache older than 3 days
           docker image prune -f
-          for i in $(seq 1 30); do
+          docker builder prune -af --filter until=72h
+          echo "Disk after:"; df -h / | tail -1
+          for i in $(seq 1 40); do
             if docker compose exec -T api wget -qO- http://127.0.0.1:4000/health; then
               echo; echo "Deployed $(git rev-parse --short HEAD)"; docker compose ps; exit 0
             fi
             sleep 5
           done
-          echo "API did not become healthy"; docker compose ps; docker compose logs --tail 50 api; exit 1
+          echo "API did not become healthy"; docker compose ps; docker compose logs --tail 80 api; exit 1
           SCRIPT
           jq -n --arg sha "$SHA" --rawfile body deploy.sh '{commands: ["SHA=\($sha)\n" + $body]}' > params.json
 

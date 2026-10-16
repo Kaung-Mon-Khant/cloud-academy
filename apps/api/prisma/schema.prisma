@@ -35,10 +35,14 @@ model Topic {
   provider    Provider
   order       Int
   icon        String
+  level       String      @default("FOUNDATIONAL") // FOUNDATIONAL | ASSOCIATE
+  exams       String[]    @default([]) // e.g. ["AZ-900", "AZ-104"]
   name        Json
   description Json
+  lesson      Json? // { minutes, objectives[], sections[{ id, title, blocks[] }], summary[] }
   questions   Question[]
   flashcards  Flashcard[]
+  progress    LessonProgress[]
 
   @@index([provider, order])
 }
@@ -50,6 +54,7 @@ model Question {
   topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
   difficulty  Difficulty
   multiple    Boolean    @default(false) // true = more than one correct option
+  exams       String[]   @default([])
   prompt      Json
   explanation Json
   options     Option[]
@@ -90,6 +95,7 @@ model User {
   createdAt    DateTime          @default(now())
   attempts     QuizAttempt[]
   reviews      FlashcardReview[]
+  lessons      LessonProgress[]
 }
 
 model QuizAttempt {
@@ -123,4 +129,17 @@ model FlashcardReview {
 
   @@unique([userId, flashcardId])
   @@index([userId, dueAt])
+}
+
+// A learner marked a topic's lesson as read.
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId     String
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now())
+
+  @@unique([userId, topicId])
+  @@index([userId])
 }
